@@ -3,19 +3,14 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Moonlite</title>
+<title>Moonlite | Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Orbitron:wght@400;700&display=swap" rel="stylesheet"/>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --glow: rgba(255,255,255,0.08);
-    --glow-strong: rgba(255,255,255,0.18);
     --glow-btn: rgba(255,255,255,0.12);
-    --white: #ffffff;
     --muted: rgba(255,255,255,0.45);
     --border: rgba(255,255,255,0.12);
-    --accent: #fff;
   }
 
   body {
@@ -27,6 +22,7 @@
     scroll-behavior: smooth;
   }
 
+  /* Ambient background glow */
   body::before {
     content: '';
     position: fixed;
@@ -40,7 +36,6 @@
     z-index: 0;
   }
 
-  /* Navbar */
   nav {
     position: fixed;
     top: 0; left: 0; right: 0;
@@ -55,27 +50,13 @@
     border-bottom: 0.5px solid var(--border);
   }
 
-  .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-  .logo-icon { position: relative; width: 36px; height: 36px; flex-shrink: 0; }
-  .nav-links { display: flex; align-items: center; gap: 8px; }
-
-  .nav-link {
-    color: var(--muted);
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 400;
-    padding: 6px 14px;
-    border-radius: 999px;
-    transition: 0.2s;
-  }
+  .nav-links { display: flex; gap: 8px; }
+  .nav-link { color: var(--muted); text-decoration: none; font-size: 14px; padding: 6px 14px; border-radius: 999px; transition: 0.2s; }
   .nav-link:hover { color: #fff; background: var(--glow-btn); }
-  .nav-link.active { color: #fff; }
 
-  /* Buttons */
   .btn {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
     gap: 8px;
     padding: 9px 22px;
     border-radius: 999px;
@@ -84,236 +65,154 @@
     color: #fff;
     font-family: inherit;
     font-size: 14px;
-    font-weight: 500;
     cursor: pointer;
-    text-decoration: none;
     transition: 0.2s;
   }
-  .btn:hover {
-    background: rgba(255,255,255,0.13);
-    border-color: rgba(255,255,255,0.5);
-    box-shadow: 0 0 18px rgba(255,255,255,0.12);
-  }
-  .btn-primary { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.4); }
-  .btn-sm { padding: 6px 16px; font-size: 13px; }
+  .btn-primary { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.4); }
 
-  /* Hero */
-  .hero {
-    position: relative;
-    padding: 160px 40px 80px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .hero h1 { font-family: 'Orbitron', monospace; font-size: clamp(40px, 7vw, 80px); margin-bottom: 20px; }
-  .hero p { color: var(--muted); max-width: 480px; margin-bottom: 36px; }
+  .hero { padding: 140px 40px 60px; text-align: center; }
+  .hero h1 { font-family: 'Orbitron', monospace; font-size: 60px; margin-bottom: 10px; }
 
-  /* Grid & Cards */
-  .section { padding: 60px 40px; max-width: 1100px; margin: 0 auto; }
-  .games-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 16px;
-  }
-
-  .game-card {
-    background: rgba(255,255,255,0.03);
-    border: 0.5px solid var(--border);
-    border-radius: 16px;
+  /* Video Stream Container */
+  .stream-container {
+    max-width: 1000px;
+    margin: 20px auto;
+    border-radius: 20px;
     overflow: hidden;
-    transition: 0.2s;
-    text-decoration: none;
-    color: inherit;
-    display: block;
-    position: relative;
-  }
-  .game-card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.3); }
-
-  .game-thumb {
-    width: 100%;
-    aspect-ratio: 3/4;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 48px;
-    background: linear-gradient(135deg, #1a1a1a, #000);
-  }
-
-  .game-info { padding: 12px 14px; }
-  .game-name { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
-  .game-meta { font-size: 12px; color: var(--muted); }
-
-  /* Modal Styles */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.85);
-    backdrop-filter: blur(8px);
-    z-index: 1000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-  }
-  .modal {
     background: #0a0a0a;
     border: 1px solid var(--border);
-    padding: 32px;
-    border-radius: 24px;
-    width: 100%;
-    max-width: 400px;
-    box-shadow: 0 0 50px rgba(0,0,0,0.5);
+    display: none; /* Hidden until stream starts */
   }
-  .modal h2 { font-family: 'Orbitron', sans-serif; font-size: 18px; margin-bottom: 20px; }
-  .modal input {
-    width: 100%;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid var(--border);
-    padding: 12px 16px;
-    border-radius: 12px;
-    color: #fff;
-    margin-bottom: 12px;
-    font-family: 'Outfit', sans-serif;
-  }
-  .modal select {
-    width: 100%;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid var(--border);
-    padding: 12px 16px;
-    border-radius: 12px;
-    color: #fff;
-    margin-bottom: 20px;
-  }
+  video { width: 100%; display: block; }
 
-  /* Status bar */
-  .status-bar {
-    position: relative;
-    margin: 0 40px 60px;
-    padding: 20px 28px;
+  .section { padding: 40px; max-width: 1100px; margin: 0 auto; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+
+  .card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
     border-radius: 16px;
-    border: 0.5px solid var(--border);
-    background: rgba(255,255,255,0.02);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    max-width: 1020px;
-    margin-inline: auto;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.2s;
   }
+  .card:hover { border-color: #fff; transform: translateY(-5px); }
 
-  footer { padding: 28px 40px; border-top: 0.5px solid var(--border); display: flex; justify-content: space-between; color: var(--muted); font-size: 13px; }
+  /* Modal */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+    display: none; align-items: center; justify-content: center; z-index: 1000;
+  }
+  .modal { background: #111; padding: 30px; border-radius: 20px; border: 1px solid var(--border); width: 350px; }
+  input { width: 100%; padding: 12px; margin-bottom: 10px; background: #222; border: 1px solid var(--border); color: #fff; border-radius: 8px; }
 </style>
 </head>
 <body>
 
 <nav>
-  <a href="#" class="logo">
-    <svg class="logo-icon crescent" viewBox="0 0 36 36" fill="none"><path d="M18 3 A15 15 0 1 1 18 33 A11 11 0 1 0 18 3Z" fill="white"/></svg>
-    <span style="font-family:'Orbitron',monospace;font-size:16px;font-weight:700;color:#fff;">MOONLITE</span>
-  </a>
+  <div style="font-family:'Orbitron'; font-weight:700;">MOONLITE</div>
   <div class="nav-links">
-    <a href="#" class="nav-link active">Home</a>
+    <a href="#" class="nav-link">Home</a>
     <a href="#library" class="nav-link">Library</a>
-    <a href="#status" class="nav-link">My PC</a>
-    <a href="#footer" class="nav-link">Settings</a>
   </div>
-  <div class="nav-right">
-    <button class="btn btn-sm">Sign In</button>
-    <button class="btn btn-primary btn-sm">Connect PC</button>
-  </div>
+  <button class="btn btn-primary" onclick="startStreaming()">Connect PC</button>
 </nav>
 
 <section class="hero">
   <h1>MOONLITE</h1>
-  <p>Stream your own desktop to any browser. Your rig, wherever you are.</p>
-  <div class="hero-btns">
-    <button class="btn btn-primary">Start Streaming</button>
-    <button class="btn">Connect My PC</button>
+  <p style="color:var(--muted)">Your rig, anywhere.</p>
+  
+  <!-- The Stream Window -->
+  <div class="stream-container" id="streamContainer">
+    <video id="remoteVideo" autoplay playsinline></video>
+  </div>
+
+  <div style="margin-top: 30px;">
+    <button class="btn btn-primary" onclick="startStreaming()">Start Streaming</button>
   </div>
 </section>
 
-<div id="status" class="status-bar">
-  <div class="status-item"><span class="status-label">Stream:</span> <span class="status-value">Ready</span></div>
-  <div class="status-item"><span class="status-label">Latency:</span> <span class="status-value">— ms</span></div>
-  <div class="status-item"><span class="status-label">Protocol:</span> <span class="status-value">WebRTC</span></div>
-</div>
-
 <div id="library" class="section">
-  <div class="section-header" style="margin-bottom: 24px;">
-    <span class="section-title">Your Shortcuts</span>
-  </div>
-  <div class="games-grid" id="shortcutsGrid">
-    <!-- Static Add Button -->
-    <a href="javascript:void(0)" class="game-card" onclick="openModal()" style="border-style:dashed; display:flex; align-items:center; justify-content:center; min-height:260px; flex-direction:column; gap:8px;">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      <span style="font-size:13px;color:rgba(255,255,255,0.3);">Add Shortcut</span>
-    </a>
-  </div>
-</div>
-
-<!-- Modal -->
-<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
-  <div class="modal" onclick="event.stopPropagation()">
-    <h2>Add New Shortcut</h2>
-    <input type="text" id="shortcutName" placeholder="Name (e.g. Chrome, Discord)">
-    <input type="text" id="shortcutPath" placeholder="URL or App Directory">
-    <select id="shortcutType">
-        <option value="URL">Web URL</option>
-        <option value="App">Local PC App</option>
-    </select>
-    <div style="display:flex; gap:10px;">
-        <button class="btn btn-primary" style="flex:1" onclick="addShortcut()">Create</button>
-        <button class="btn" style="flex:1" onclick="closeModal()">Cancel</button>
+  <div class="grid" id="shortcutsGrid">
+    <div class="card" style="border-style: dashed;" onclick="openModal()">
+      <span>+ Add Shortcut</span>
     </div>
   </div>
 </div>
 
-<footer id="footer">
-  <p>© 2026 Moonlite</p>
-  <p>Your PC. Your rules.</p>
-</footer>
+<!-- Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <h3 style="margin-bottom:15px; font-family:'Orbitron'">New Shortcut</h3>
+    <input type="text" id="name" placeholder="Name">
+    <input type="text" id="path" placeholder="URL or Path">
+    <button class="btn btn-primary" style="width:100%" onclick="saveShortcut()">Add</button>
+    <button class="btn" style="width:100%; margin-top:10px;" onclick="closeModal()">Cancel</button>
+  </div>
+</div>
 
 <script>
-  function openModal() {
-    document.getElementById('modalOverlay').style.display = 'flex';
+  let pc;
+
+  async function startStreaming() {
+    const videoContainer = document.getElementById('streamContainer');
+    videoContainer.style.display = 'block';
+    
+    pc = new RTCPeerConnection();
+
+    // Listen for the video track from the PC
+    pc.ontrack = (event) => {
+        document.getElementById('remoteVideo').srcObject = event.streams[0];
+    };
+
+    // Create session offer
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+
+    // Send this offer to your local Python host
+    try {
+        const response = await fetch('http://localhost:8080/offer', {
+            method: 'POST',
+            body: JSON.stringify({
+                sdp: pc.localDescription.sdp,
+                type: pc.localDescription.type
+            }),
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        const answer = await response.json();
+        await pc.setRemoteDescription(new RTCSessionDescription(answer));
+    } catch (e) {
+        alert("Could not connect to PC. Is the Python script running?");
+    }
   }
 
-  function closeModal() {
-    document.getElementById('modalOverlay').style.display = 'none';
-  }
+  function openModal() { document.getElementById('modal').style.display = 'flex'; }
+  function closeModal() { document.getElementById('modal').style.display = 'none'; }
 
-  function addShortcut() {
-    const name = document.getElementById('shortcutName').value;
-    const path = document.getElementById('shortcutPath').value;
-    const type = document.getElementById('shortcutType').value;
-
-    if (!name || !path) return alert("Please fill in both fields");
+  function saveShortcut() {
+    const name = document.getElementById('name').value;
+    const path = document.getElementById('path').value;
+    if(!name || !path) return;
 
     const grid = document.getElementById('shortcutsGrid');
-    const newCard = document.createElement('div');
-    newCard.className = 'game-card';
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `<strong>${name}</strong><br><small style="color:var(--muted)">${path}</small>`;
     
-    // Gradient based on type
-    const bg = type === 'URL' ? 'linear-gradient(135deg,#1a1a2e,#16213e)' : 'linear-gradient(135deg,#2d1515,#0d0d0d)';
+    // Logic to send "Launch" command to PC
+    card.onclick = () => {
+        fetch('http://localhost:8080/launch', {
+            method: 'POST',
+            body: JSON.stringify({ path: path }),
+            headers: { 'Content-Type': 'application/json' }
+        });
+    };
 
-    newCard.innerHTML = `
-      <div class="game-thumb" style="background: ${bg}; font-size: 20px; color: rgba(255,255,255,0.2)">
-        ${type === 'URL' ? '🌐' : '💻'}
-      </div>
-      <div class="game-info">
-        <div class="game-name">${name}</div>
-        <div class="game-meta">${type} Shortcut</div>
-      </div>
-    `;
-
-    // Add it before the "Add" button
-    grid.insertBefore(newCard, grid.lastElementChild);
-    
-    // Clear and close
-    document.getElementById('shortcutName').value = '';
-    document.getElementById('shortcutPath').value = '';
+    grid.insertBefore(card, grid.firstChild);
     closeModal();
   }
 </script>
-
 </body>
 </html>
