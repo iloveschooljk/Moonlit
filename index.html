@@ -1,218 +1,198 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Moonlite | Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Orbitron:wght@400;700&display=swap" rel="stylesheet"/>
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --glow-btn: rgba(255,255,255,0.12);
-    --muted: rgba(255,255,255,0.45);
-    --border: rgba(255,255,255,0.12);
-  }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Moonlite | Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Orbitron:wght@400;700&display=swap" rel="stylesheet"/>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --glow-btn: rgba(255,255,255,0.12);
+            --muted: rgba(255,255,255,0.45);
+            --border: rgba(255,255,255,0.12);
+        }
 
-  body {
-    background: #000;
-    color: #fff;
-    font-family: 'Outfit', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-    scroll-behavior: smooth;
-  }
+        body {
+            background: #000;
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-  /* Ambient background glow */
-  body::before {
-    content: '';
-    position: fixed;
-    top: -200px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 700px;
-    height: 500px;
-    background: radial-gradient(ellipse at center, rgba(255,255,255,0.06) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: 0;
-  }
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            height: 64px;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(16px);
+            border-bottom: 0.5px solid var(--border);
+        }
 
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 40px;
-    height: 64px;
-    background: rgba(0,0,0,0.75);
-    backdrop-filter: blur(16px);
-    border-bottom: 0.5px solid var(--border);
-  }
+        .nav-links { display: flex; gap: 8px; }
+        .nav-link { color: var(--muted); text-decoration: none; font-size: 14px; padding: 6px 14px; border-radius: 999px; transition: 0.2s; }
+        .nav-link:hover { color: #fff; background: var(--glow-btn); }
 
-  .nav-links { display: flex; gap: 8px; }
-  .nav-link { color: var(--muted); text-decoration: none; font-size: 14px; padding: 6px 14px; border-radius: 999px; transition: 0.2s; }
-  .nav-link:hover { color: #fff; background: var(--glow-btn); }
+        .hero { padding: 140px 40px 60px; text-align: center; }
+        .hero h1 { font-family: 'Orbitron', monospace; font-size: 60px; margin-bottom: 10px; }
 
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 9px 22px;
-    border-radius: 999px;
-    border: 1px solid rgba(255,255,255,0.25);
-    background: rgba(255,255,255,0.06);
-    color: #fff;
-    font-family: inherit;
-    font-size: 14px;
-    cursor: pointer;
-    transition: 0.2s;
-  }
-  .btn-primary { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.4); }
+        .stream-container {
+            max-width: 1000px;
+            margin: 20px auto;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #0a0a0a;
+            border: 1px solid var(--border);
+            display: none;
+        }
+        video { width: 100%; display: block; background: #000; }
 
-  .hero { padding: 140px 40px 60px; text-align: center; }
-  .hero h1 { font-family: 'Orbitron', monospace; font-size: 60px; margin-bottom: 10px; }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 22px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.25);
+            background: rgba(255,255,255,0.06);
+            color: #fff;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-primary { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.4); }
 
-  /* Video Stream Container */
-  .stream-container {
-    max-width: 1000px;
-    margin: 20px auto;
-    border-radius: 20px;
-    overflow: hidden;
-    background: #0a0a0a;
-    border: 1px solid var(--border);
-    display: none; /* Hidden until stream starts */
-  }
-  video { width: 100%; display: block; }
+        .section { padding: 40px; max-width: 1100px; margin: 0 auto; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
 
-  .section { padding: 40px; max-width: 1100px; margin: 0 auto; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+        .card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .card:hover { border-color: #fff; transform: translateY(-5px); }
 
-  .card {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: 0.2s;
-  }
-  .card:hover { border-color: #fff; transform: translateY(-5px); }
-
-  /* Modal */
-  .modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
-    display: none; align-items: center; justify-content: center; z-index: 1000;
-  }
-  .modal { background: #111; padding: 30px; border-radius: 20px; border: 1px solid var(--border); width: 350px; }
-  input { width: 100%; padding: 12px; margin-bottom: 10px; background: #222; border: 1px solid var(--border); color: #fff; border-radius: 8px; }
-</style>
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+            display: none; align-items: center; justify-content: center; z-index: 1000;
+        }
+        .modal { background: #111; padding: 30px; border-radius: 20px; border: 1px solid var(--border); width: 350px; }
+        input { width: 100%; padding: 12px; margin-bottom: 10px; background: #222; border: 1px solid var(--border); color: #fff; border-radius: 8px; }
+    </style>
 </head>
 <body>
 
 <nav>
-  <div style="font-family:'Orbitron'; font-weight:700;">MOONLITE</div>
-  <div class="nav-links">
-    <a href="#" class="nav-link">Home</a>
-    <a href="#library" class="nav-link">Library</a>
-  </div>
-  <button class="btn btn-primary" onclick="startStreaming()">Connect PC</button>
+    <div style="font-family:'Orbitron'; font-weight:700;">MOONLITE</div>
+    <div class="nav-links">
+        <a href="#" class="nav-link">Home</a>
+    </div>
+    <button class="btn btn-primary" onclick="startStreaming()">Connect PC</button>
 </nav>
 
 <section class="hero">
-  <h1>MOONLITE</h1>
-  <p style="color:var(--muted)">Your rig, anywhere.</p>
-  
-  <!-- The Stream Window -->
-  <div class="stream-container" id="streamContainer">
-    <video id="remoteVideo" autoplay playsinline></video>
-  </div>
+    <h1>MOONLITE</h1>
+    <p style="color:var(--muted)">Your rig, anywhere.</p>
+    
+    <div class="stream-container" id="streamContainer">
+        <video id="remoteVideo" autoplay playsinline></video>
+    </div>
 
-  <div style="margin-top: 30px;">
-    <button class="btn btn-primary" onclick="startStreaming()">Start Streaming</button>
-  </div>
+    <div style="margin-top: 30px;">
+        <button class="btn btn-primary" onclick="startStreaming()">Start Streaming</button>
+    </div>
 </section>
 
-<div id="library" class="section">
-  <div class="grid" id="shortcutsGrid">
-    <div class="card" style="border-style: dashed;" onclick="openModal()">
-      <span>+ Add Shortcut</span>
+<div class="section">
+    <div class="grid" id="shortcutsGrid">
+        <div class="card" style="border-style: dashed;" onclick="openModal()">
+            <span>+ Add Shortcut</span>
+        </div>
     </div>
-  </div>
 </div>
 
-<!-- Modal -->
 <div class="modal-overlay" id="modal">
-  <div class="modal">
-    <h3 style="margin-bottom:15px; font-family:'Orbitron'">New Shortcut</h3>
-    <input type="text" id="name" placeholder="Name">
-    <input type="text" id="path" placeholder="URL or Path">
-    <button class="btn btn-primary" style="width:100%" onclick="saveShortcut()">Add</button>
-    <button class="btn" style="width:100%; margin-top:10px;" onclick="closeModal()">Cancel</button>
-  </div>
+    <div class="modal">
+        <h3 style="margin-bottom:15px; font-family:'Orbitron'">New Shortcut</h3>
+        <input type="text" id="name" placeholder="Name">
+        <input type="text" id="path" placeholder="URL or Path">
+        <button class="btn btn-primary" style="width:100%" onclick="saveShortcut()">Add</button>
+        <button class="btn" style="width:100%; margin-top:10px;" onclick="closeModal()">Cancel</button>
+    </div>
 </div>
 
 <script>
-  let pc;
+    let pc;
+    // Replace this with your latest ngrok URL from the terminal
+    const REMOTE_HOST = "https://sputter-krypton-kitty.ngrok-free.dev";
 
-  async function startStreaming() {
-    const videoContainer = document.getElementById('streamContainer');
-    videoContainer.style.display = 'block';
-    
-    pc = new RTCPeerConnection();
-
-    // Listen for the video track from the PC
-    pc.ontrack = (event) => {
-        document.getElementById('remoteVideo').srcObject = event.streams[0];
-    };
-
-    // Create session offer
-    const offer = await pc.createOffer();
-    await pc.setLocalDescription(offer);
-
-    // Send this offer to your local Python host
-    try {
-        const response = await fetch('http://localhost:8080/offer', {
-            method: 'POST',
-            body: JSON.stringify({
-                sdp: pc.localDescription.sdp,
-                type: pc.localDescription.type
-            }),
-            headers: { 'Content-Type': 'application/json' }
+    async function startStreaming() {
+        const videoContainer = document.getElementById('streamContainer');
+        videoContainer.style.display = 'block';
+        
+        // STUN server helps the Chromebook find your PC through the router
+        pc = new RTCPeerConnection({
+            iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
         });
 
-        const answer = await response.json();
-        await pc.setRemoteDescription(new RTCSessionDescription(answer));
-    } catch (e) {
-        alert("Could not connect to PC. Is the Python script running?");
+        pc.ontrack = (event) => {
+            console.log("Receiving track...");
+            document.getElementById('remoteVideo').srcObject = event.streams[0];
+        };
+
+        const offer = await pc.createOffer();
+        await pc.setLocalDescription(offer);
+
+        try {
+            const response = await fetch(`${REMOTE_HOST}/offer`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    sdp: pc.localDescription.sdp,
+                    type: pc.localDescription.type
+                }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            const answer = await response.json();
+            await pc.setRemoteDescription(new RTCSessionDescription(answer));
+        } catch (e) {
+            alert("Connection Failed. Check if ngrok and Python are running.");
+        }
     }
-  }
 
-  function openModal() { document.getElementById('modal').style.display = 'flex'; }
-  function closeModal() { document.getElementById('modal').style.display = 'none'; }
+    function saveShortcut() {
+        const name = document.getElementById('name').value;
+        const path = document.getElementById('path').value;
+        if(!name || !path) return;
 
-  function saveShortcut() {
-    const name = document.getElementById('name').value;
-    const path = document.getElementById('path').value;
-    if(!name || !path) return;
+        const grid = document.getElementById('shortcutsGrid');
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `<strong>${name}</strong><br><small style="color:var(--muted)">${path}</small>`;
+        
+        card.onclick = () => {
+            fetch(`${REMOTE_HOST}/launch`, {
+                method: 'POST',
+                body: JSON.stringify({ path: path }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+        };
 
-    const grid = document.getElementById('shortcutsGrid');
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.innerHTML = `<strong>${name}</strong><br><small style="color:var(--muted)">${path}</small>`;
-    
-    // Logic to send "Launch" command to PC
-    card.onclick = () => {
-        fetch('http://localhost:8080/launch', {
-            method: 'POST',
-            body: JSON.stringify({ path: path }),
-            headers: { 'Content-Type': 'application/json' }
-        });
-    };
+        grid.insertBefore(card, grid.firstChild);
+        closeModal();
+    }
 
-    grid.insertBefore(card, grid.firstChild);
-    closeModal();
-  }
+    function openModal() { document.getElementById('modal').style.display = 'flex'; }
+    function closeModal() { document.getElementById('modal').style.display = 'none'; }
 </script>
 </body>
 </html>
